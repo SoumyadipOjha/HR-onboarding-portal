@@ -7,6 +7,7 @@ import ChatPage from './pages/ChatPage'
 import Profile from './pages/Profile'
 import HRDashboard from './pages/HRDashboard'
 import EmployeeDashboard from './pages/EmployeeDashboard'
+import Guide from './pages/Guide'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import NavBar from './components/NavBar'
 
@@ -29,6 +30,7 @@ export default function App(){
         <Route path="/chat" element={<Private><ChatPage/></Private>} />
         <Route path="/profile" element={<Private><Profile/></Private>} />
         <Route path="/dashboard" element={<Private><DashboardWrapper/></Private>} />
+        <Route path="/guide" element={<Private roles={["employee"]}><Guide/></Private>} />
         <Route path="/hr" element={<Private roles={["hr"]}><HRDashboard/></Private>} />
         <Route path="/employee" element={<Private roles={["employee"]}><EmployeeDashboard/></Private>} />
         <Route path="/" element={<Navigate to="/login" />} />

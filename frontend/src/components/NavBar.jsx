@@ -39,6 +39,7 @@ export default function NavBar(){
             <>
               <Link to="/dashboard" className="hidden md:inline-block btn-ghost">Dashboard</Link>
               {(user.role === 'hr' || user.role === 'employee') && <Link to="/chat" className="btn-ghost">Chat</Link>}
+              {user.role === 'employee' && <Link to="/guide" className="btn-ghost">Guide</Link>}
               <div className="ml-2 relative" ref={profileRef}>
                 <button type="button" className="profile-avatar-btn" onClick={()=>setOpen(prev=>!prev)} aria-haspopup="true" aria-expanded={open}>
                   {user.avatarURL ? (

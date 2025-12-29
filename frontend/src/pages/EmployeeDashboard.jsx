@@ -73,6 +73,13 @@ export default function EmployeeDashboard(){
             </div>
           </div>
           <div className="card">
+            <div className="font-medium mb-2">Need help with onboarding?</div>
+            <div className="text-sm muted">Open the guide for step-by-step instructions about uploading documents and chatting with HR.</div>
+            <div className="mt-4">
+              <a href="/guide" className="btn-primary">Open Guide</a>
+            </div>
+          </div>
+          <div className="card">
             <h4 className="font-semibold mb-2">Required Documents</h4>
             <div className="space-y-3">
               {(docsStatus?.requiredDocs || []).map(rd => {

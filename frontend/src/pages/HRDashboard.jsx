@@ -196,8 +196,37 @@ export default function HRDashboard(){
                             <div className="font-medium">{r.label}</div>
                             <div className="text-xs text-slate-500">{uploaded ? `Uploaded ${new Date(uploaded.uploadedAt).toLocaleString()}` : 'Missing'}</div>
                           </div>
-                          <div>
-                            {uploaded ? <a className="text-sm text-indigo-600" href={uploaded.url} target="_blank" rel="noreferrer">View</a> : <button className="btn-primary" onClick={()=>sendRemind(viewingEmployee._id)}>Remind</button>}
+                          <div className="flex items-center gap-3">
+                            {uploaded ? (
+                              <>
+                                <a className="text-sm text-indigo-600" href={uploaded.url} target="_blank" rel="noreferrer">View</a>
+                                <button
+                                  className="text-sm btn-ghost"
+                                  onClick={async () => {
+                                    try{
+                                      // download via blob to force save
+                                      const res = await fetch(uploaded.url);
+                                      const blob = await res.blob();
+                                      const url = window.URL.createObjectURL(blob);
+                                      const a = document.createElement('a');
+                                      // try to create a sensible filename
+                                      const filename = `${viewingEmployee.name || 'document'}-${r.key}${uploaded.url.split('.').pop().includes('?') ? '' : '.'}${uploaded.url.split('.').pop().split('?')[0]}`;
+                                      a.href = url;
+                                      a.download = filename;
+                                      document.body.appendChild(a);
+                                      a.click();
+                                      a.remove();
+                                      window.URL.revokeObjectURL(url);
+                                    }catch(e){
+                                      console.error('Download failed', e);
+                                      alert('Download failed');
+                                    }
+                                  }}
+                                >Download</button>
+                              </>
+                            ) : (
+                              <button className="btn-primary" onClick={()=>sendRemind(viewingEmployee._id)}>Remind</button>
+                            )}
                           </div>
                         </li>
                       );
