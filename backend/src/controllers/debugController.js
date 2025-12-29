@@ -11,8 +11,16 @@ const cloudinaryTest = async (req, res, next) => {
     console.log('[cloudinaryTest] upload result:', result && result.secure_url);
     return res.json({ ok: true, result });
   } catch (err) {
-    console.error('[cloudinaryTest] error uploading to Cloudinary:', err);
-    return next(err);
+    console.error('[cloudinaryTest] error uploading to Cloudinary:', err && err.message);
+    // Try to return helpful Cloudinary error details to the caller for faster debugging
+    const status = (err && err.http_code) || 500;
+    const body = {
+      ok: false,
+      message: err && err.message ? err.message : 'Unknown Cloudinary error',
+      details: err && err.error ? err.error : undefined,
+      request_id: err && err.request_id ? err.request_id : undefined,
+    };
+    return res.status(status).json(body);
   }
 };
 
