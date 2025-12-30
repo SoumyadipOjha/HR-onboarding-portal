@@ -89,7 +89,33 @@ export default function EmployeeDashboard(){
                     <div className="font-medium">{rd.label}</div>
                     <div className="text-sm text-slate-600">{uploaded ? 'Uploaded' : 'Not uploaded'}</div>
                     <div className="mt-2"><input type="file" onChange={e=>upload(e, rd.key)} /></div>
-                    {uploaded && <div className="mt-2 text-xs"><a href={uploaded.url} target="_blank" rel="noreferrer">View</a></div>}
+                    {uploaded && <div className="mt-2 text-xs flex items-center gap-2">
+                      <a href={uploaded.url} target="_blank" rel="noreferrer" className="text-sm btn-ghost" aria-label="View document" title="View">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                      </a>
+                      <button className="text-sm btn-ghost" aria-label="Download document" title="Download" onClick={async ()=>{
+                        try{
+                          const res = await fetch(uploaded.url);
+                          const blob = await res.blob();
+                          const url = URL.createObjectURL(blob);
+                          const a = document.createElement('a');
+                          a.href = url;
+                          a.download = `${rd.label || rd.key}`;
+                          document.body.appendChild(a);
+                          a.click();
+                          a.remove();
+                          URL.revokeObjectURL(url);
+                        }catch(e){ console.error(e); alert('Download failed'); }
+                      }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v12m0 0l4-4m-4 4-4-4" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M20 20H4" />
+                        </svg>
+                      </button>
+                    </div>}
                   </div>
                 );
               })}

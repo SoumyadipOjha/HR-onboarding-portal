@@ -196,37 +196,36 @@ export default function HRDashboard(){
                             <div className="font-medium">{r.label}</div>
                             <div className="text-xs text-slate-500">{uploaded ? `Uploaded ${new Date(uploaded.uploadedAt).toLocaleString()}` : 'Missing'}</div>
                           </div>
-                          <div className="flex items-center gap-3">
+                          <div>
                             {uploaded ? (
-                              <>
-                                <a className="text-sm text-indigo-600" href={uploaded.url} target="_blank" rel="noreferrer">View</a>
-                                <button
-                                  className="text-sm btn-ghost"
-                                  onClick={async () => {
-                                    try{
-                                      // download via blob to force save
-                                      const res = await fetch(uploaded.url);
-                                      const blob = await res.blob();
-                                      const url = window.URL.createObjectURL(blob);
-                                      const a = document.createElement('a');
-                                      // try to create a sensible filename
-                                      const filename = `${viewingEmployee.name || 'document'}-${r.key}${uploaded.url.split('.').pop().includes('?') ? '' : '.'}${uploaded.url.split('.').pop().split('?')[0]}`;
-                                      a.href = url;
-                                      a.download = filename;
-                                      document.body.appendChild(a);
-                                      a.click();
-                                      a.remove();
-                                      window.URL.revokeObjectURL(url);
-                                    }catch(e){
-                                      console.error('Download failed', e);
-                                      alert('Download failed');
-                                    }
-                                  }}
-                                >Download</button>
-                              </>
-                            ) : (
-                              <button className="btn-primary" onClick={()=>sendRemind(viewingEmployee._id)}>Remind</button>
-                            )}
+                              <div className="flex items-center gap-2">
+                                <a className="text-sm btn-ghost" href={uploaded.url} target="_blank" rel="noreferrer" aria-label="View document" title="View">
+                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                  </svg>
+                                </a>
+                                <button className="text-sm btn-ghost" aria-label="Download document" title="Download" onClick={async ()=>{
+                                  try{
+                                    const res = await fetch(uploaded.url);
+                                    const blob = await res.blob();
+                                    const url = URL.createObjectURL(blob);
+                                    const a = document.createElement('a');
+                                    a.href = url;
+                                    a.download = `${viewingEmployee.name || 'document'}-${r.key}`;
+                                    document.body.appendChild(a);
+                                    a.click();
+                                    a.remove();
+                                    URL.revokeObjectURL(url);
+                                  }catch(e){ console.error(e); alert('Download failed'); }
+                                }}>
+                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v12m0 0l4-4m-4 4-4-4" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M20 20H4" />
+                                  </svg>
+                                </button>
+                              </div>
+                            ) : <button className="btn-primary" onClick={()=>sendRemind(viewingEmployee._id)}>Remind</button>}
                           </div>
                         </li>
                       );

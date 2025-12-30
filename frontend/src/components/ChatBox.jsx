@@ -54,9 +54,13 @@ export default function ChatBox({ withUserId }){
         ))}
         <div ref={bottom} />
       </div>
-      <div className="flex gap-2 mt-auto">
-        <input value={text} onChange={e=>setText(e.target.value)} placeholder="Type a message" className="flex-1 p-2 border rounded" />
-        <button onClick={send} className="btn-primary">Send</button>
+      <div className="flex gap-2 mt-auto items-center">
+        <input value={text} onChange={e=>setText(e.target.value)} onKeyDown={(e)=>{ if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); if(text.trim()) send(); } }} placeholder="Type a message" className="flex-1 p-2 border rounded" aria-label="Message input" />
+        <button onClick={send} className="btn-primary p-2" disabled={!text.trim()} aria-label="Send message" title="Send message">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M15.964.686a.5.5 0 0 0-.64-.495L.5 6.541a.5.5 0 0 0 .019.93l4.694 1.82 1.82 4.694a.5.5 0 0 0 .93.019l6.35-14.824a.5.5 0 0 0-.349-.032z"/>
+          </svg>
+        </button>
       </div>
     </div>
   )
