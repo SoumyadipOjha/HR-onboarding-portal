@@ -1,20 +1,42 @@
 import React, { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import api from '../services/api'
 import ChatBox from '../components/ChatBox'
 
 export default function ChatPage(){
   const [contacts, setContacts] = useState([]);
   const [selected, setSelected] = useState(null);
+  const [searchParams] = useSearchParams();
+  const userIdParam = searchParams.get('userId');
 
   useEffect(()=>{
     async function load(){
       try{
         const res = await api.get('/chat/contacts');
         setContacts(res.data.contacts || []);
+        // Auto-select user from URL parameter if provided
+        if (userIdParam && res.data.contacts) {
+          const found = res.data.contacts.find(c => c._id === userIdParam);
+          if (found) {
+            setSelected(found._id);
+          } else if (res.data.contacts.length) {
+            setSelected(res.data.contacts[0]._id);
+          }
+        } else if (res.data.contacts && res.data.contacts.length) {
+          setSelected(res.data.contacts[0]._id);
+        }
       }catch(err){ console.error(err); }
     }
     load();
   },[]);
+
+  // Update selected when URL parameter changes
+  useEffect(() => {
+    if (userIdParam && contacts.length) {
+      const found = contacts.find(c => c._id === userIdParam);
+      if (found) setSelected(found._id);
+    }
+  }, [userIdParam, contacts]);
 
   const [counts, setCounts] = useState({});
 

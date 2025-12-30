@@ -34,12 +34,12 @@ export default function NavBar(){
         <div className="flex-1" />
 
         {/* Right: actions */}
-        <div className="flex items-center gap-3 flex-0">
+        <div className="flex items-center gap-2 sm:gap-3 flex-0">
           {user ? (
             <>
-              <Link to="/dashboard" className="hidden md:inline-block btn-ghost">Dashboard</Link>
-              {(user.role === 'hr' || user.role === 'employee') && <Link to="/chat" className="btn-ghost">Chat</Link>}
-              {user.role === 'employee' && <Link to="/guide" className="btn-ghost">Guide</Link>}
+              {user.role !== 'employee' && <Link to="/dashboard" className="hidden md:inline-block btn-ghost">Dashboard</Link>}
+              {user.role === 'employee' && <Link to="/employee" className="btn-ghost text-xs sm:text-sm">Home</Link>}
+              {user.role === 'employee' && <Link to="/guide" className="btn-ghost text-xs sm:text-sm">Guide</Link>}
               <div className="ml-2 relative" ref={profileRef}>
                 <button type="button" className="profile-avatar-btn" onClick={()=>setOpen(prev=>!prev)} aria-haspopup="true" aria-expanded={open}>
                   {user.avatarURL ? (
