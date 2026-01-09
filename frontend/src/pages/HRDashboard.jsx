@@ -39,7 +39,8 @@ export default function HRDashboard(){
     const user = JSON.parse(localStorage.getItem('user'));
     if (!user) return;
 
-    const socket = io('http://localhost:5000');
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const socket = io(API_URL);
     socket.on('connect', () => {
       // Log removed
       socket.emit('join', { userId: user.id });

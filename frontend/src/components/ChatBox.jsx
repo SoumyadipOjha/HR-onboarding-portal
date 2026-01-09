@@ -2,7 +2,8 @@ import React, { useEffect, useState, useRef } from 'react'
 import { io } from 'socket.io-client'
 import api from '../services/api'
 
-const socket = io('http://localhost:5000');
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const socket = io(API_URL);
 
 export default function ChatBox({ withUserId, compact = false, userObj = null }){
   const [msgs, setMsgs] = useState([]);

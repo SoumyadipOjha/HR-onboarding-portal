@@ -3,7 +3,20 @@ const Chat = require('../models/Chat');
 
 const initSocket = (server) => {
   const { Server } = require('socket.io');
-  io = new Server(server, { cors: { origin: '*' } });
+  
+  // CORS configuration - allow frontend domain
+  const allowedOrigins = [
+    process.env.FRONTEND_URL || 'https://hirefloww.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:3000'
+  ];
+  
+  io = new Server(server, { 
+    cors: { 
+      origin: allowedOrigins,
+      credentials: true
+    } 
+  });
   io.on('connection', socket => {
     console.log('Socket connected', socket.id);
     socket.on('join', ({ userId }) => {
