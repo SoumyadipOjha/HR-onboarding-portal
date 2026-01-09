@@ -27,18 +27,18 @@ export function Pie({ data = [], size = 180, innerRadius = 60, colors = [] }){
     <div className="flex items-center gap-4">
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
         {slices.map((s, i) => (
-          <path key={i} d={s.path} fill={s.color} stroke="#fff" strokeWidth="1" style={{cursor: 'pointer'}}>
+          <path key={i} d={s.path} fill={s.color} className="stroke-white dark:stroke-slate-800" strokeWidth="2" style={{cursor: 'pointer'}}>
             <title>{`${s.label}: ${s.value}`}</title>
           </path>
         ))}
-        <circle cx={cx} cy={cy} r={innerRadius} fill="#fff" />
+        <circle cx={cx} cy={cy} r={innerRadius} className="fill-white dark:fill-slate-800" />
       </svg>
       <div>
         {data.map((d,i)=> (
           <div key={i} className="flex items-center gap-2 text-sm">
             <span style={{width:12,height:12,background: colors[i] || defaultColors[i % defaultColors.length]}} className="inline-block rounded-sm"></span>
-            <span className="muted">{d.label}</span>
-            <span className="ml-2 font-semibold">{d.value}</span>
+            <span className="text-slate-500 dark:text-neutral-400">{d.label}</span>
+            <span className="ml-2 font-semibold text-slate-900 dark:text-white">{d.value}</span>
           </div>
         ))}
       </div>

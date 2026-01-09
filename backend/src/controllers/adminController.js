@@ -24,8 +24,44 @@ const createUser = async (req, res, next) => {
 const listUsers = async (req, res, next) => {
   try {
     const users = await User.find().select('-password');
-    res.json({ users });
+    
+    // Attach onboarding progress for employees
+    const EmployeeDocuments = require('../models/EmployeeDocuments');
+    const usersWithProgress = await Promise.all(users.map(async (user) => {
+      const userObj = user.toObject();
+      
+      if (user.role === 'employee') {
+        const docs = await EmployeeDocuments.findOne({ employeeId: user._id });
+        userObj.onboarding = {
+          completionPercent: docs?.completionPercent || 0,
+          experienceLevel: docs?.experienceLevel || 'fresher'
+        };
+      }
+      
+      return userObj;
+    }));
+    
+    res.json({ users: usersWithProgress });
   } catch (err) { next(err); }
 };
 
-module.exports = { createUser, listUsers };
+const deleteUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    // Check if user exists
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    // Prevent deleting self (though UI should prevent this locally)
+    if (user._id.toString() === req.user.id) {
+      return res.status(400).json({ message: 'Cannot delete yourself' });
+    }
+
+    await User.findByIdAndDelete(id);
+    res.json({ message: 'User deleted successfully' });
+  } catch (err) { next(err); }
+};
+
+module.exports = { createUser, listUsers, deleteUser };

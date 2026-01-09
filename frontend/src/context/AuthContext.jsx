@@ -5,7 +5,14 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const token = localStorage.getItem('token');
-  const user = token ? JSON.parse(localStorage.getItem('user')) : null;
+  let user = null;
+  try {
+    user = token ? JSON.parse(localStorage.getItem('user')) : null;
+  } catch (e) {
+    console.error('Failed to parse user from local storage', e);
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+  }
   const [stateUser, setStateUser] = useState(user);
 
   const login = async (email, password) => {
@@ -19,7 +26,12 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => { localStorage.removeItem('token'); localStorage.removeItem('user'); setStateUser(null); };
 
-  return <AuthContext.Provider value={{ user: stateUser, login, logout }}>{children}</AuthContext.Provider>
+  const updateUser = (userData) => {
+    localStorage.setItem('user', JSON.stringify(userData));
+    setStateUser(userData);
+  };
+
+  return <AuthContext.Provider value={{ user: stateUser, login, logout, updateUser }}>{children}</AuthContext.Provider>
 }
 
 export const useAuth = () => useContext(AuthContext)
