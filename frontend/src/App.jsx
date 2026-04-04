@@ -23,10 +23,13 @@ const Private = ({ children, roles }) => {
 
 import { useLocation } from 'react-router-dom'
 
+import { Toaster } from 'react-hot-toast'
+
 export default function App(){
   return (
     <ThemeProvider>
       <AuthProvider>
+        <Toaster position="top-right" toastOptions={{ className: 'dark:bg-neutral-800 dark:text-white' }} />
         <AppContent />
       </AuthProvider>
     </ThemeProvider>

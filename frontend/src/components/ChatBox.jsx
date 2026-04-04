@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { io } from 'socket.io-client'
+import toast from 'react-hot-toast'
 import api from '../services/api'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -38,11 +39,44 @@ export default function ChatBox({ withUserId, compact = false, userObj = null })
 
   useEffect(()=>{
     const user = JSON.parse(localStorage.getItem('user'));
-    if (user) socket.emit('join', { userId: user.id || user._id });
-    socket.on('chat-message', (m)=>{
+    const currentUserId = user?.id || user?._id;
+    if (user) socket.emit('join', { userId: currentUserId });
+    
+    // We need to re-attach the listener when withUserId changes so we know who is currently active
+    // But since this useEffect runs completely on mount, we might need to handle it carefully.
+    // Instead of putting withUserId in the dependency array (which would re-attach the socket often),
+    // we can use a ref or just let it update Msgs, and we handle the toast condition.
+    
+    // Actually, setMsgs happens correctly. Let's just create a ref for the current active chat:
+    const handleMsg = (m) => {
       setMsgs(prev=>[...prev, m]);
-    });
-    return ()=>{ socket.off('chat-message'); }
+      
+      // If the message is NOT from me, and NOT from the person I'm actively chatting with:
+      // (Or if we are just on the dashboard and maybe it is the person, but we are looking somewhere else?)
+      // Actually, if we are on EmployeeDashboard, withUserId might be set to the only HR person.
+      // If the user gets a message, we can show a toast anyway if it's from someone else.
+      if (m.senderId !== currentUserId) {
+         // Show toast
+         toast((t) => (
+          <div className="flex flex-col gap-1 w-full min-w-[200px]">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-sky-100 flex items-center justify-center text-sky-600 font-bold text-xs uppercase">
+                HR
+              </div>
+              <div>
+                <div className="font-semibold text-slate-800 dark:text-white text-sm">New message from HR</div>
+                <div className="text-xs text-slate-500 dark:text-neutral-400 max-w-[200px] truncate">
+                  {m.message?.startsWith('http') ? 'Sent an attachment' : m.message}
+                </div>
+              </div>
+            </div>
+          </div>
+        ), { duration: 4000, position: 'top-right' });
+      }
+    };
+    
+    socket.on('chat-message', handleMsg);
+    return ()=>{ socket.off('chat-message', handleMsg); }
   },[]);
 
   useEffect(()=>{ async function load(){

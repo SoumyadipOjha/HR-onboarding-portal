@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { io } from 'socket.io-client'
+import toast from 'react-hot-toast'
 import api from '../services/api'
 import PieChart from '../components/PieChart'
 
@@ -53,13 +54,42 @@ export default function HRDashboard(){
           const current = prev[senderId] || prev[String(senderId)] || 0;
           return { ...prev, [senderId]: current + 1 };
         });
+        
+        // Show Toast Notification
+        // Find the sender name from state if possible
+        const sender = employees.find(e => e._id === msg.senderId || e.id === msg.senderId);
+        const senderName = sender ? sender.name : 'an Employee';
+        
+        toast((t) => (
+          <div className="flex flex-col gap-1 w-full min-w-[200px]">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-sky-100 flex items-center justify-center text-sky-600 font-bold text-xs uppercase">
+                {senderName.charAt(0)}
+              </div>
+              <div>
+                <div className="font-semibold text-slate-800 dark:text-white text-sm">New message from {senderName}</div>
+                <div className="text-xs text-slate-500 dark:text-neutral-400 max-w-[200px] truncate">
+                  {msg.message?.startsWith('http') ? 'Sent an attachment' : msg.message}
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end pr-1 pt-1">
+              <button 
+                onClick={() => { toast.dismiss(t.id); navigate(`/chat?userId=${msg.senderId}`); }}
+                className="px-3 py-1 bg-sky-500 hover:bg-sky-600 text-white text-xs font-medium rounded-md transition-colors"
+              >
+                Reply
+              </button>
+            </div>
+          </div>
+        ), { duration: 5000, position: 'top-right' });
       }
     });
 
     return () => {
       socket.disconnect();
     }
-  }, []);
+  }, [employees, navigate]);
 
   const change = e => setForm(prev=>({ ...prev, [e.target.name]: e.target.value }));
 
