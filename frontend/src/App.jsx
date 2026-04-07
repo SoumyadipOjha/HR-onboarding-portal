@@ -14,6 +14,8 @@ import NavBar from './components/NavBar'
 import Footer from './components/Footer'
 import Documentation from './pages/Documentation'
 
+import SetupPassword from './pages/SetupPassword'
+
 const Private = ({ children, roles }) => {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" />;
@@ -38,14 +40,14 @@ export default function App(){
 
 function AppContent() {
   const location = useLocation();
-  const hideNavbarRoutes = ['/login', '/documentation'];
+  const hideNavbarRoutes = ['/login', '/documentation', '/setup-password'];
   const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
   
   // Routes where we want specific layout handling (no default container/padding)
   const isFullScreen = location.pathname.startsWith('/chat');
 
   // Routes where Footer should be hidden
-  const hideFooterRoutes = ['/login', '/documentation'];
+  const hideFooterRoutes = ['/login', '/documentation', '/setup-password'];
   const shouldHideFooter = hideFooterRoutes.includes(location.pathname) || location.pathname.startsWith('/chat');
 
   return (
@@ -54,6 +56,7 @@ function AppContent() {
       <main className={`flex-1 flex flex-col ${isFullScreen ? 'overflow-hidden relative' : ''} ${shouldHideNavbar || isFullScreen ? '' : "max-w-6xl mx-auto px-6 py-6 w-full"}`}>
         <Routes>
           <Route path="/login" element={<Login/>} />
+          <Route path="/setup-password" element={<SetupPassword/>} />
           <Route path="/documentation" element={<Documentation/>} />
           <Route path="/admin" element={<Private roles={["admin"]}><AdminDashboard/></Private>} />
           <Route path="/admin/create-user" element={<Private roles={["admin"]}><AdminCreateUser/></Private>} />

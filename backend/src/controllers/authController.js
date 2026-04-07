@@ -25,4 +25,31 @@ const login = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-module.exports = { register, login };
+const crypto = require('crypto');
+
+const setupPassword = async (req, res, next) => {
+  try {
+    const { token, password } = req.body;
+    if (!token || !password) return res.status(400).json({ message: 'Token and password are required' });
+
+    const resetPasswordToken = crypto.createHash('sha256').update(token).digest('hex');
+
+    const user = await User.findOne({
+      resetPasswordToken,
+      resetPasswordExpire: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired token' });
+    }
+
+    user.password = await bcrypt.hash(password, 10);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save();
+
+    res.json({ message: 'Password has been set up successfully!' });
+  } catch (err) { next(err); }
+};
+
+module.exports = { register, login, setupPassword };
