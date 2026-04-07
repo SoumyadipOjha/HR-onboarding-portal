@@ -1,7 +1,7 @@
 require('dotenv').config();
 const http = require('http');
 const app = require('./app');
-const { initSocket } = require('./services/socket');
+const { initSocket } = require('./core/services/socket');
 
 const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);

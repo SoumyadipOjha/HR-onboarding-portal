@@ -4,14 +4,14 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 const path = require('path');
 
-const authRoutes = require('./routes/authRoutes');
-const hrRoutes = require('./routes/hrRoutes');
-const employeeRoutes = require('./routes/employeeRoutes');
-const adminRoutes = require('./routes/adminRoutes');
-const chatRoutes = require('./routes/chatRoutes');
-const userRoutes = require('./routes/userRoutes');
-const debugRoutes = require('./routes/debugRoutes');
-const { errorHandler } = require('./middlewares/errorHandler');
+const authRoutes = require('./features/auth/authRoutes');
+const hrRoutes = require('./features/hr/hrRoutes');
+const employeeRoutes = require('./features/employee/employeeRoutes');
+const adminRoutes = require('./features/admin/adminRoutes');
+const chatRoutes = require('./features/chat/chatRoutes');
+const userRoutes = require('./features/user/userRoutes');
+const debugRoutes = require('./features/debug/debugRoutes');
+const { errorHandler } = require('./core/middlewares/errorHandler');
 
 require('dotenv').config();
 
@@ -47,7 +47,7 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/hr-onboardi
   console.log('MongoDB connected');
   // seed admin
   try {
-    const User = require('./models/User');
+    const User = require('./features/user/User');
     const bcrypt = require('bcrypt');
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com';
     const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@1234';
