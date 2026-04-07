@@ -44,6 +44,52 @@ sequenceDiagram
 
 ---
 
+## 📁 Feature-Sliced Project Structure
+
+To guarantee scalability and enterprise production-readiness, the entire codebase has been restructured into the robust **Feature-Sliced Design** (`/features`, `/shared`, and `/core`).
+
+```text
+HR-onboarding-portal/
+├── backend/
+│   ├── src/
+│   │   ├── core/                  # Global Middlewares, Services & Utilities
+│   │   │   ├── middlewares/       # Auth, Upload, Error Handlers
+│   │   │   ├── models/            # Shared Data Schemas (Notifications, Docs)
+│   │   │   ├── services/          # Cloudinary & Socket.io Handlers
+│   │   │   └── utils/             # Nodemailer integrations
+│   │   │
+│   │   ├── features/              # Modularized Business Logic
+│   │   │   ├── admin/             # Admin Controllers & Routes
+│   │   │   ├── auth/              # JWT Login & Setup-Password flows
+│   │   │   ├── chat/              # Realtime Messages schema & routing
+│   │   │   ├── employee/          # Employee documents logic
+│   │   │   ├── hr/                # HR analytics & overview controllers
+│   │   │   └── user/              # Base Account Schema
+│   │   │
+│   │   ├── app.js                 # Express App Initialization
+│   │   └── server.js              # HTTP & Socket Engine Boot
+│   └── .env                       # Environment Variables
+│
+└── frontend/
+    ├── src/
+    │   ├── features/              # Feature-Driven UI Modularity
+    │   │   ├── admin/             # SuperAdmin Dashboard Pages
+    │   │   ├── auth/              # Secure Authentication UIs
+    │   │   ├── chat/              # Dedicated Live Chat Pages
+    │   │   ├── employee/          # Guided Employee Experience UIs
+    │   │   └── hr/                # HR Tracking Dashboards
+    │   │
+    │   └── shared/                # Globally Reusable Assets
+    │       ├── components/        # Navbars, Footers, Graphs & Layouts
+    │       ├── context/           # React Theme & Auth Providers
+    │       └── services/          # Base Axios API instances
+    │
+    ├── index.css                  # Core Tailwind Styles & Glassmorphism
+    └── vite.config.js             # Vite Compilation Engine
+```
+
+---
+
 ## 🛠️ Technology Stack
 * **Frontend Design**: React 18, TailwindCSS V3, React-Router-Dom
 * **Components & Polish**: React-Hot-Toast (live popups), Heroicons/SVG Integrations
