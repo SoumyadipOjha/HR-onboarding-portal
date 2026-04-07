@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { io } from 'socket.io-client'
 import toast from 'react-hot-toast'
 import api from '../../../shared/services/api'
-import PieChart from '../components/PieChart'
+import PieChart from '../../../shared/components/PieChart'
 
 export default function HRDashboard(){
   const navigate = useNavigate();

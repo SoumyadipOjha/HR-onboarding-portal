@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../../../shared/services/api'
-import PieChart from '../components/PieChart'
+import PieChart from '../../../shared/components/PieChart'
 
 export default function AdminDashboard(){
   const [users, setUsers] = useState([]);
